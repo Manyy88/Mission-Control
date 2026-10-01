@@ -1,0 +1,64 @@
+AUTOCOM WAY · Mission Control — M04 PATCH GS · 2026-10-01
+
+1. Dentro de MC agrega:
+
+M04: {
+ id:'M04',
+ name:'Todos al Kick Off',
+ date:'2026-10-06',
+ start:'18:00',
+ type:'PRIORITY'
+},
+
+2. REEMPLAZA getMissionCatalog_() por:
+
+function getMissionCatalog_() {
+ const sh = sheet_(MC.MISSION_CATALOG);
+ if (!sh) return {};
+ const map = {};
+ rowsAsObjects_(sh).forEach(r => {
+   const id = norm_(r.Mision_ID);
+   if (!id) return;
+   map[id] = {
+     id:id,
+     name:String(r.Nombre || '').trim(),
+     detail:String(r.Detalle_mision || '').trim(),
+     instructions:String(r.Instrucciones_mision || '').trim(),
+     recoveryInstructions:String(r.Instrucciones_recuperacion || '').trim(),
+     points:Number(r.Puntos_base || 0),
+     recoveryPoints:Number(r.Puntos_recuperacion || 0)
+   };
+ });
+ return map;
+}
+
+3. AGREGA:
+
+function getPriorityMission_(missionCatalog) {
+ const cfg = MC.M04;
+ const catalog = missionCatalog && missionCatalog.M04 ? missionCatalog.M04 : null;
+ return {
+   id:cfg.id,
+   name:catalog && catalog.name ? catalog.name : cfg.name,
+   status:'CURRENT',
+   completed:false,
+   type:cfg.type,
+   date:cfg.date,
+   time:cfg.start,
+   target:'100% de asistencia de los convocados de tu unidad',
+   detail:catalog && catalog.detail ? catalog.detail : '',
+   instructions:catalog && catalog.instructions ? catalog.instructions : '',
+   points:catalog && Number(catalog.points || 0) ? Number(catalog.points || 0) : 0
+ };
+}
+
+4. En getMissionState(), justo después de:
+const missionCatalog = getMissionCatalog_();
+
+agrega:
+const priorityMission = getPriorityMission_(missionCatalog);
+
+5. En el return de getMissionState() agrega:
+priorityMission:priorityMission,
+
+NO MODIFICAR el bloque de activeMission M01→M02→M03.

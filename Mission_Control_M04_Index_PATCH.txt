@@ -1,0 +1,94 @@
+AUTOCOM WAY · Mission Control — M04 PATCH INDEX · 2026-10-01
+
+1. Dentro de #dashboard, justo después de:
+<div class="route" id="route"></div>
+
+agrega:
+<div id="priorityMissionCard"></div>
+
+2. En render(), justo después de:
+renderRoute();
+
+agrega:
+renderPriorityMission();
+
+3. Agrega al script:
+
+function renderPriorityMission(){
+ const box=document.getElementById('priorityMissionCard');
+ if(!box)return;
+ const m=STATE&&STATE.priorityMission;
+ if(!m){box.innerHTML='';return;}
+
+ box.innerHTML=`<div class="card priority-card">
+   <span class="tag priority">MISIÓN PRIORITARIA · ${escapeHtml(m.id)}</span>
+   <h2 style="margin-top:10px">${escapeHtml(m.name)}</h2>
+   <p>El despliegue de los <b>52 Estándares Esenciales</b> está por comenzar.</p>
+   <div class="priority-meta">
+     <div><b>🎯 Meta</b><br>${escapeHtml(m.target||'100% de asistencia')}</div>
+     <div><b>📅 Kick Off</b><br>6 OCT · 6:00 P.M.</div>
+   </div>
+   <button type="button" class="btn secondary" onclick="openPriorityMissionDetail()">Ver misión</button>
+ </div>`;
+}
+
+function openPriorityMissionDetail(){
+ const d=STATE&&STATE.priorityMission;
+ if(!d)return;
+
+ document.getElementById('missionDetailTitle').textContent=`${d.id} · ${d.name}`;
+ document.getElementById('missionDetailIntro').textContent=d.detail||
+   'El despliegue de los 52 Estándares Esenciales está por comenzar. El Kick Off ya está en marcha y la invitación fue enviada desde AUTOCOM Channel. Tu misión es asegurar que todos los roles convocados de tu unidad estén incluidos, confirmen su participación y asistan a la sesión.';
+
+ document.getElementById('missionDetailInstructions').textContent=d.instructions||
+`1. REVISA
+Asegúrate de que estén incluidos en el evento los roles que correspondan a tu unidad:
+
+Director de Marca · Gerente General · Gerente de Ventas · Gerente de Seminuevos · Business Manager · Integrantes del Comité Local
+
+2. CONFIRMA
+Da seguimiento para que los convocados acepten el evento en Google Calendar y reserven el espacio.
+
+3. CONECTA
+Asegura su participación en el Kick Off.
+
+📅 Martes 6 de octubre · 6:00 p.m.
+
+🎯 OBJETIVO
+100% de asistencia de los convocados de tu unidad.
+
+¿Falta alguien?
+Si una persona que ocupa alguno de estos roles no aparece en el evento de Calendar, repórtalo al equipo AUTOCOM WAY para incorporarla.`;
+
+ const pts=document.getElementById('missionDetailPoints');
+ pts.textContent='';
+ pts.classList.add('hidden');
+ document.getElementById('missionDetailModal').classList.remove('hidden');
+ document.body.style.overflow='hidden';
+}
+
+4. Agrega al CSS:
+
+.priority-card{
+ border-top:4px solid var(--way);
+ background:linear-gradient(135deg,#FFFFFF,#F7F5FF);
+ box-shadow:var(--shadow);
+ margin-bottom:18px;
+}
+.tag.priority{background:rgba(117,100,218,.12);color:#5746C5}
+.priority-meta{
+ display:grid;
+ grid-template-columns:1fr 1fr;
+ gap:9px;
+ margin:14px 0 4px;
+}
+.priority-meta>div{
+ border:1px solid var(--line);
+ background:#fff;
+ border-radius:12px;
+ padding:11px;
+ font-size:10px;
+ line-height:1.5;
+ color:#4D586C;
+}
+@media(max-width:520px){.priority-meta{grid-template-columns:1fr}}
