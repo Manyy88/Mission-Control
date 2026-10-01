@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html>
+<head>
+ <base target="_top">
+ <meta name="viewport" content="width=device-width, initial-scale=1">
+ <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+ <style>
+ :root{
+ --ice:#E2E9F3;--way:#7564DA;--slate:#212B44;--white:#FFFFFF;
+ --ink:#212B44;--muted:#697386;--line:#DCE3EE;--surface:#F7F9FC;
+ --ok:#2F7658;--ok-bg:#EDF7F2;--warn:#A66A00;--warn-bg:#FFF6E5;
+ --danger:#9A493A;--shadow:0 10px 30px rgba(33,43,68,.08);
+ }
+ *{box-sizing:border-box}
+ html{background:var(--ice)}
+ body{margin:0;background:linear-gradient(180deg,var(--ice) 0, #F5F7FB 280px);color:var(--ink);font-family:Montserrat,Arial,sans-serif}
+ .app{max-width:760px;margin:0 auto;min-height:100vh;background:rgba(255,255,255,.96);padding-bottom:76px;box-shadow:0 0 0 1px rgba(33,43,68,.04)}
+ .top{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.96);backdrop-filter:blur(12px);border-bottom:1px solid var(--line);padding:17px 20px 15px}
+ .brand{font-weight:800;font-size:12px;letter-spacing:.13em;color:var(--slate)}
+ .brand:before{content:'';display:inline-block;width:8px;height:8px;margin-right:8px;background:var(--way);transform:rotate(45deg);border-radius:1px}
+ .sub{font-size:11px;color:var(--muted);margin-top:4px;margin-left:18px}
+ select,input,textarea{width:100%;font:inherit;color:var(--ink);border:1px solid #CBD5E3;border-radius:12px;padding:12px 13px;background:#fff;outline:none;transition:.18s ease}
+ select:focus,input:focus,textarea:focus{border-color:var(--way);box-shadow:0 0 0 3px rgba(117,100,218,.12)}
+ textarea{min-height:92px;resize:vertical}.unit{margin-top:13px}
+ main{padding:20px}
+ .hero{padding:22px;border-radius:20px;background:linear-gradient(135deg,var(--ice),#F8FAFD 70%);border:1px solid #D6DFEC;margin-bottom:17px;position:relative;overflow:hidden}
+ .hero:after{content:'';position:absolute;width:110px;height:110px;right:-42px;top:-46px;border:22px solid rgba(117,100,218,.09);transform:rotate(45deg);border-radius:16px}
+ .eyebrow{font-size:10px;font-weight:800;letter-spacing:.12em;color:var(--way)}
+ h1{font-size:25px;line-height:1.13;margin:7px 0 8px;color:var(--slate)}
+ h2{font-size:18px;line-height:1.25;margin:0 0 10px;color:var(--slate)}
+ h3{font-size:14px;margin:0 0 8px;color:var(--slate)}
+ p{font-size:13px;line-height:1.55;margin:6px 0;color:#4D586C}
+ .points{font-size:29px;font-weight:800;margin-top:14px;color:var(--slate)}
+ .route{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:1px 0 17px}
+ .chip{text-align:center;border:1px solid var(--line);padding:9px 8px;border-radius:11px;font-size:10px;font-weight:800;letter-spacing:.01em;background:#fff}
+ .chip.done{color:var(--ok);background:var(--ok-bg);border-color:#CDE5D9}
+ .chip.current{color:#fff;background:var(--way);border-color:var(--way);box-shadow:0 5px 14px rgba(117,100,218,.18)}
+ .chip.recovery{color:var(--warn);background:var(--warn-bg);border-color:#EED6A6}
+ .chip.locked{color:#8791A2;background:#F3F5F8;border-color:#E2E6ED}
+ .card{border:1px solid var(--line);border-radius:18px;padding:18px;margin:12px 0;background:#fff;box-shadow:0 5px 18px rgba(33,43,68,.045)}
+ #missionCard .card{border-top:4px solid var(--way);box-shadow:var(--shadow)}
+ .tag{display:inline-block;font-size:9px;font-weight:800;letter-spacing:.09em;padding:6px 8px;border-radius:7px;background:#F1F3F7;color:var(--slate)}
+ .tag.recovery{background:var(--warn-bg);color:#845600}.tag.current{background:rgba(117,100,218,.12);color:#5746C5}.tag.done{background:var(--ok-bg);color:#236348}
+ .btn{width:100%;border:0;border-radius:12px;padding:13px 15px;background:var(--slate);color:white;font:inherit;font-size:12px;font-weight:800;cursor:pointer;margin-top:10px;transition:.18s ease}
+ .btn:hover{transform:translateY(-1px);box-shadow:0 6px 15px rgba(33,43,68,.16)}
+ .btn:disabled{opacity:.45;cursor:not-allowed;transform:none;box-shadow:none}
+ .btn.secondary{background:#fff;color:var(--way);border:1px solid #CFC9F2;box-shadow:none}
+ .field{margin:13px 0}.label{font-size:10px;font-weight:800;letter-spacing:.015em;margin:0 0 6px;color:#3D485B}.hint{font-size:10px;color:var(--muted);margin-top:5px;line-height:1.45}
+ details{border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin:10px 0;background:var(--surface)}
+ summary{cursor:pointer;font-size:11px;font-weight:800;color:var(--slate)}
+ .criterion{display:flex;gap:9px;align-items:flex-start;font-size:11px;line-height:1.4;margin:9px 0}.criterion input{width:auto;margin-top:2px;accent-color:var(--way)}
+ .advisor{border-top:1px solid var(--line);padding-top:17px;margin-top:19px}.prospect{background:var(--surface);border:1px solid #E8ECF2;border-radius:14px;padding:13px;margin:10px 0}
+ .mini{font-size:9px;color:var(--muted);line-height:1.45}.quality{font-size:22px;font-weight:800}.hidden{display:none!important}
+ .notice{padding:12px 13px;border-radius:12px;background:var(--warn-bg);border-left:3px solid #D9A84A;color:#5F5138;font-size:10px;line-height:1.55;margin:10px 0}
+ .success{padding:12px 13px;border-radius:12px;background:var(--ok-bg);border-left:3px solid var(--ok);color:#245D46;font-size:10px;line-height:1.55;margin:10px 0}
+ .loading{opacity:.55;pointer-events:none}
+ .footer{position:fixed;bottom:0;left:0;right:0;max-width:760px;margin:auto;background:rgba(33,43,68,.97);padding:11px 18px;font-size:9px;letter-spacing:.08em;color:#E2E9F3;text-align:center}
+ /* Detalle contextual de misión */
+ .mission-modal{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(33,43,68,.48);backdrop-filter:blur(4px)}
+ .mission-modal.hidden{display:none!important}
+ .mission-modal-panel{width:100%;max-width:560px;max-height:82vh;overflow-y:auto;background:#fff;border-radius:20px;box-shadow:0 24px 60px rgba(33,43,68,.22);padding:22px;position:relative}
+ .mission-modal-close{position:absolute;top:14px;right:14px;width:34px;height:34px;border:0;border-radius:50%;background:#F1F3F7;color:var(--slate);font-size:18px;cursor:pointer}
+ .mission-detail{white-space:pre-line;font-size:12px;line-height:1.65;color:#4D586C}
+ .mission-points{display:inline-block;margin-top:12px;padding:7px 10px;border-radius:8px;background:var(--warn-bg);color:#845600;font-size:10px;font-weight:800}
+ .priority-card{border-top:4px solid var(--way);background:linear-gradient(135deg,#FFFFFF,#F7F5FF);box-shadow:var(--shadow);margin-top:16px;margin-bottom:18px}
+ .tag.priority{background:rgba(117,100,218,.12);color:#5746C5}
+ .priority-meta{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:14px 0 4px}
+ .priority-meta>div{border:1px solid var(--line);background:#fff;border-radius:12px;padding:11px;font-size:10px;line-height:1.5;color:#4D586C}
+ @media(max-width:520px){main{padding:16px}.top{padding:15px 16px}.hero{padding:19px}h1{font-size:22px}.route{gap:5px}.chip{font-size:9px;padding:8px 5px}.card{padding:15px}.priority-meta{grid-template-columns:1fr}}
+ </style>
+</head>
+<body>
+<div class="app" id="app">
+ <div class="top">
+ <div class="brand">AUTOCOM WAY // MISSION CONTROL</div>
+ <div class="sub">Dirección · Adopción · Evolución</div>
+ <select id="unit" class="unit"><option value="">Selecciona tu unidad</option></select>
+ </div>
+
+ <main>
+ <div id="empty" class="hero">
+ <div class="eyebrow">MISSION CONTROL</div>
+ <h1>¿Qué te toca hacer ahora?</h1>
+ <p>Selecciona tu unidad para consultar tu ruta, pendientes y siguiente acción.</p>
+ </div>
+
+ <div id="globalPriorityMission" class="card priority-card">
+   <span class="tag priority">MISIÓN PRIORITARIA · M04</span>
+   <h2 style="margin-top:10px">Todos al Kick Off</h2>
+   <p>El despliegue de los <b>52 Estándares Esenciales</b> está por comenzar.</p>
+   <div class="priority-meta">
+     <div><b>🎯 Meta</b><br>100% de asistencia de los convocados</div>
+     <div><b>📅 Kick Off</b><br>6 OCT · 6:00 P.M.</div>
+   </div>
+   <button type="button" class="btn secondary" onclick="openGlobalM04Detail()">Ver misión</button>
+ </div>
+
+ <div id="dashboard" class="hidden">
+ <div class="hero">
+ <div class="eyebrow">RUTA DE IMPLEMENTACIÓN</div>
+ <h1 id="unitName"></h1>
+ <p id="statusText"></p>
+ <div class="points"><span id="totalPoints">0</span> pts</div>
+ <div class="mini" id="pointsBreakdown"></div>
+ </div>
+
+ <div class="route" id="route"></div>
+ <div id="missionCard"></div>
+ <div id="formArea"></div>
+ <div id="qualityArea"></div>
+ </div>
+ </main>
+
+ <div class="footer">AUTOCOM WAY · Mission Control</div>
+</div>
+
+<div id="missionDetailModal" class="mission-modal hidden" onclick="closeMissionDetail(event)">
+ <div class="mission-modal-panel" onclick="event.stopPropagation()">
+   <button class="mission-modal-close" type="button" onclick="closeMissionDetail()">×</button>
+   <span class="tag recovery">DETALLE DE MISIÓN</span>
+   <h2 id="missionDetailTitle" style="margin-top:12px"></h2>
+   <p id="missionDetailIntro" class="mission-detail"></p>
+   <div id="missionDetailInstructions" class="mission-detail" style="margin-top:14px"></div>
+   <div id="missionDetailPoints" class="mission-points"></div>
+   <button type="button" class="btn secondary" onclick="closeMissionDetail()">Cerrar</button>
+ </div>
+</div>
+
+<script>
+let STATE=null;
+const CRITERIA=[
+ ['control','Mantiene el control del contacto'],
+ ['situacion','Parte de la situación u objeción real del prospecto'],
+ ['concreta','Define una actividad concreta y ejecutable'],
+ ['fecha','Tiene una fecha comprometida'],
+ ['crm','Puede registrarse y dar seguimiento en CRM'],
+ ['feedback','Genera feedback útil para avanzar']
+];
+
+document.addEventListener('DOMContentLoaded',()=>{
+ google.script.run.withSuccessHandler(loadUnits).withFailureHandler(showError).getUnits();
+ document.getElementById('unit').addEventListener('change',loadState);
+});
+
+function loadUnits(units){
+ const s=document.getElementById('unit');
+ // Producción: ocultar unidades QA sin eliminar su infraestructura ni datos.
+ const productionUnits=(units||[]).filter(u=>!/^QA\s*[·\-]/i.test(String(u.name||'').trim()));
+ productionUnits.forEach(u=>{
+ const o=document.createElement('option');o.value=u.name;o.textContent=u.name;s.appendChild(o);
+ });
+}
+
+function loadState(){
+ const u=document.getElementById('unit').value;
+ if(!u){document.getElementById('dashboard').classList.add('hidden');document.getElementById('empty').classList.remove('hidden');return;}
+ setLoading(true);
+ google.script.run.withSuccessHandler(s=>{STATE=s;render();setLoading(false)})
+ .withFailureHandler(e=>{showError(e);setLoading(false)}).getMissionState(u);
+}
+
+function render(){
+ document.getElementById('empty').classList.add('hidden');
+ document.getElementById('dashboard').classList.remove('hidden');
+ document.getElementById('unitName').textContent=STATE.unidad;
+ document.getElementById('totalPoints').textContent=STATE.points.total;
+ document.getElementById('pointsBreakdown').textContent=
+ `Acumulado de la ruta · Histórico ${STATE.points.historical} · Recuperación ${STATE.points.recovery}`;
+
+ const active=STATE.activeMission;
+ document.getElementById('statusText').textContent=
+ !active?'Ruta actual completada.':
+ active==='M03'?'Tu unidad está lista para el Laboratorio de SMA.':
+ `Tu siguiente acción es regularizar ${active}. Al completarla, Mission Control habilitará el siguiente paso.`;
+
+ renderRoute();
+ renderMissionCard();
+ renderForm();
+ renderQuality();
+}
+
+function renderRoute(){
+ const r=document.getElementById('route');r.innerHTML='';
+ ['M01','M02','M03'].forEach(id=>{
+ const m=STATE.missions[id], d=document.createElement('div');
+ const cls=m.status==='COMPLETED'?'done':m.status==='CURRENT'?'current':m.status==='RECOVERY'?'recovery':'locked';
+ const icon=m.status==='COMPLETED'?'':m.status==='LOCKED'?'':'';
+ const suffix=m.status==='RECOVERY'?' RECUPERAR':m.status==='CURRENT'?' ACTUAL':'';
+ d.className='chip '+cls;d.textContent=`${icon} ${id}${suffix}`;r.appendChild(d);
+ });
+}
+
+function renderMissionCard(){
+ const box=document.getElementById('missionCard');
+ if(!STATE.activeMission){
+   box.innerHTML='<div class="success"><b>Ruta completada.</b> La unidad no tiene misiones pendientes en esta versión.</div>';
+   return;
+ }
+ const id=STATE.activeMission,m=STATE.missions[id],rec=STATE.activeMode==='RECOVERY';
+ const catalog=STATE.activeMissionDetail||null;
+ const points=rec && catalog && Number(catalog.recoveryPoints) ? Number(catalog.recoveryPoints) : (rec?250:500);
+ const detailButton=rec && catalog && (catalog.detail||catalog.recoveryInstructions)
+   ? `<button type="button" class="btn secondary" onclick="openMissionDetail()">Ver misión</button>` : '';
+
+ box.innerHTML=`<div class="card">
+   <span class="tag ${rec?'recovery':'current'}">${rec?'RECUPERACIÓN':'MISIÓN ACTUAL'}</span>
+   <h2 style="margin-top:10px">${id} · ${escapeHtml(m.name)}</h2>
+   <p>${missionCopy(id,rec)}</p>
+   <p><b>${points} puntos disponibles</b> · ${rec?'recuperación':'misión vigente'}</p>
+   <div class="mini">Cierre original: ${formatDate(m.deadline)}</div>
+   ${detailButton}
+ </div>`;
+}
+
+function missionCopy(id,rec){
+ if(id==='M01') return rec?'Completa las cinco evidencias pendientes para regularizar la misión y continuar tu ruta.':'Activa tu unidad.';
+ if(id==='M02') return rec?'Asegura la cobertura de las personas pendientes y convócalas a la recuperación disponible.':'Activa a tu equipo.';
+ return 'Selecciona 3 asesores, revisa 2 prospectos por asesor y observa cómo se está construyendo la Siguiente Mejor Actividad en la operación.';
+}
+
+function openGlobalM04Detail(){
+ document.getElementById('missionDetailTitle').textContent='M04 · Todos al Kick Off';
+ document.getElementById('missionDetailIntro').textContent=
+   'El despliegue de los 52 Estándares Esenciales está por comenzar. El Kick Off ya está en marcha y la invitación fue enviada desde AUTOCOM Channel. Tu misión es asegurar que todos los roles convocados de tu unidad estén incluidos, confirmen su participación y asistan a la sesión.';
+
+ document.getElementById('missionDetailInstructions').textContent=
+`1. REVISA
+Asegúrate de que estén incluidos en el evento los roles que correspondan a tu unidad:
+
+Director de Marca · Gerente General · Gerente de Ventas · Gerente de Seminuevos · Business Manager · Integrantes del Comité Local
+
+2. CONFIRMA
+Da seguimiento para que los convocados acepten el evento en Google Calendar y reserven el espacio.
+
+3. CONECTA
+Asegura su participación en el Kick Off.
+
+📅 Martes 6 de octubre · 6:00 p.m.
+
+🎯 OBJETIVO
+100% de asistencia de los convocados de tu unidad.
+
+¿Falta alguien?
+Si una persona que ocupa alguno de estos roles no aparece en el evento de Calendar, repórtalo al equipo AUTOCOM WAY para incorporarla.`;
+
+ const pts=document.getElementById('missionDetailPoints');
+ pts.textContent='';
+ pts.classList.add('hidden');
+ document.getElementById('missionDetailModal').classList.remove('hidden');
+ document.body.style.overflow='hidden';
+}
+
+function openMissionDetail(){
+ const d=STATE&&STATE.activeMissionDetail;
+ if(!d)return;
+ const id=STATE.activeMission||d.id||'';
+ const fallbackName=(STATE.missions&&STATE.missions[id])?STATE.missions[id].name:'Misión';
+ document.getElementById('missionDetailTitle').textContent=`${id} · ${d.name||fallbackName}`;
+ document.getElementById('missionDetailIntro').textContent=d.detail||'';
+ document.getElementById('missionDetailInstructions').textContent=d.recoveryInstructions||'';
+ const pts=Number(d.recoveryPoints||0);
+ document.getElementById('missionDetailPoints').textContent=pts?`Recuperación · ${pts} pts`:'';
+ document.getElementById('missionDetailPoints').classList.toggle('hidden',!pts);
+ document.getElementById('missionDetailModal').classList.remove('hidden');
+ document.body.style.overflow='hidden';
+}
+
+function closeMissionDetail(){
+ document.getElementById('missionDetailModal').classList.add('hidden');
+ document.body.style.overflow='';
+}
+
+function renderForm(){
+ const box=document.getElementById('formArea');box.innerHTML='';
+ if(!STATE.activeMission)return;
+ if(STATE.activeMission==='M01') box.innerHTML=m01Form();
+ if(STATE.activeMission==='M02') box.innerHTML=m02Form();
+ if(STATE.activeMission==='M03') box.innerHTML=m03Form();
+}
+
+function commonFields(){
+ return `<div class="field"><div class="label">Responsable</div><input id="responsable" placeholder="Nombre"></div>
+ <div class="field"><div class="label">Correo</div><input id="correo" type="email" placeholder="correo@autocom.mx"></div>`;
+}
+
+function m01Form(){
+ let ev='';
+ for(let i=1;i<=5;i++) ev+=`<div class="prospect"><h3>Evidencia ${i}</h3>
+ <div class="field"><div class="label">Perfil</div><input id="m01profile${i}" placeholder="Ej. Asesor, BDC, F&I..."></div>
+ <div class="field"><div class="label">Liga del video</div><input id="m01link${i}" placeholder="https://..."></div>
+ <div class="field"><div class="label">Comentario opcional</div><input id="m01comment${i}" placeholder="Observación breve"></div></div>`;
+ return `<div class="card"><h2>Recuperar M01</h2>${commonFields()}
+ <div class="notice">Usa cinco perfiles diferentes. La recuperación conserva la evidencia de la misión original y otorga 250 puntos.</div>
+ ${ev}<button class="btn" onclick="submitM01()">Completar recuperación</button></div>`;
+}
+
+let M02_MANUAL_COUNT=0;
+function m02SessionOptions(){
+ const d=STATE.m02Recovery||{sessions:[]};
+ return `<option value="">Selecciona una sesión</option>${(d.sessions||[]).map(s=>`<option value="${s.id}" ${(!s.unlocked||s.full)?'disabled':''}>${escapeHtml(s.label)}${s.finalized?' · Sesión finalizada':' · '+s.available+' lugares disponibles'}</option>`).join('')}`;
+}
+function addM02Manual(){
+ M02_MANUAL_COUNT++;
+ const i=M02_MANUAL_COUNT;
+ const box=document.getElementById('m02ManualList');
+ box.insertAdjacentHTML('beforeend',`<div class="prospect" id="m02manual_${i}">
+ <div><b>Participante adicional</b><div class="hint">Úsalo para alguien que no fue registrado en la convocatoria original.</div></div>
+ <div class="field"><div class="label">Nombre</div><input id="m02mn${i}" placeholder="Nombre completo"></div>
+ <div class="field"><div class="label">Correo</div><input id="m02me${i}" placeholder="correo@autocom.mx"></div>
+ <div class="field"><div class="label">Sesión</div><select id="m02mg${i}">${m02SessionOptions()}</select></div>
+ <button type="button" class="btn secondary" onclick="document.getElementById('m02manual_${i}').remove()">Quitar</button>
+ </div>`);
+}
+function m02Form(){
+ M02_MANUAL_COUNT=0;
+ const d=STATE.m02Recovery||{people:[],sessions:[],pending:0,assigned:0,rosterFound:false};
+ const sessionCards=(d.sessions||[]).map(s=>s.finalized
+ ? `<div class="notice" style="opacity:.65"><b>${escapeHtml(s.label)}</b><br>${formatM02Date(s.start)} · Sesión finalizada ✓</div>`
+ : `<div class="notice"><b>${escapeHtml(s.label)}</b><br>${formatM02Date(s.start)} · ${s.available} lugares disponibles</div>`).join('');
+ const pending=(d.people||[]).filter(p=>!p.assigned);
+ const assigned=(d.people||[]).filter(p=>p.assigned);
+ const rows=pending.map((p,i)=>`<div class="prospect"><div><b>${escapeHtml(p.name||p.email)}</b><div class="hint">${escapeHtml(p.email)} · Identificado en convocatoria original</div></div><div class="field" style="margin-top:8px"><select id="m02g${i}"><option value="">No convocar todavía</option>${(d.sessions||[]).map(s=>`<option value="${s.id}" ${(!s.unlocked||s.full)?'disabled':''}>${escapeHtml(s.label)}${s.finalized?' · Sesión finalizada':' · '+s.available+' lugares disponibles'}</option>`).join('')}</select></div><input type="hidden" id="m02e${i}" value="${escapeHtml(p.email)}"></div>`).join('');
+ const already=assigned.length?`<details><summary>Ver ${assigned.length} ya convocados</summary>${assigned.map(p=>`<div class="criterion"> ${escapeHtml(p.name||p.email)} · ${escapeHtml(p.group)}</div>`).join('')}</details>`:'';
+ const noHistorical=!d.historicalRosterFound;
+ const msg=!noHistorical
+ ? `<div class="notice"><b>${pending.length} pendientes identificados.</b> Mission Control precargó lo que conocemos de la convocatoria original. Si faltó alguien que nunca fue registrado, agrégalo abajo.</div>`
+ : `<div class="notice"><b>No contamos con un padrón histórico completo para esta unidad.</b> Declara cuántos asesores deben participar en la recuperación y registra a las personas faltantes.</div>`;
+ const coverage=noHistorical ? `<div class="field"><div class="label">¿Cuántos asesores deben participar en esta recuperación?</div><input id="m02DeclaredTotal" type="number" min="1" step="1" value="${d.declaredTotal||''}" placeholder="Ej. 12"><div class="hint">Convocados actualmente: ${d.assigned||0}${d.declaredTotal?' de '+d.declaredTotal:''}. Puedes corregir el total mientras la convocatoria siga abierta.</div></div>` : '';
+ return `<div class="card"><h2>Recuperar M02</h2>${commonFields()}
+ ${msg}${coverage}${sessionCards}${already}${rows}
+ <div id="m02ManualList"></div>
+ <button type="button" class="btn secondary" onclick="addM02Manual()">+ Agregar participante</button>
+ <div class="hint" style="margin-top:10px">La convocatoria es el primer paso. El cierre de M02 se confirma cuando la población declarada queda cubierta por la ruta de recuperación.</div>
+ <button class="btn" onclick="submitM02()">Confirmar convocatoria</button></div>`;
+}
+
+function criteriaHtml(prefix){
+ return `<details><summary> ¿Cómo sé si es una buena SMA?</summary>
+ ${CRITERIA.map(c=>`<div class="criterion"> ${escapeHtml(c[1])}</div>`).join('')}
+ </details>
+ <div class="label">¿Qué observaste en esta SMA?</div>
+ ${CRITERIA.map(c=>`<label class="criterion"><input type="checkbox" id="${prefix}_${c[0]}"> <span>${escapeHtml(c[1])}</span></label>`).join('')}`;
+}
+
+function m03Form(){
+ let advisors='';
+ for(let a=1;a<=3;a++){
+ let prospects='';
+ for(let p=1;p<=2;p++){
+ const pre=`a${a}p${p}`;
+ prospects+=`<div class="prospect">
+ <h3>Prospecto ${p}</h3>
+ <div class="field"><div class="label">Prospecto / folio</div><input id="${pre}_prospect" placeholder="Nombre o identificador"></div>
+ <div class="field"><div class="label">SMA registrada</div><textarea id="${pre}_sma" placeholder="Escribe la Siguiente Mejor Actividad tal como está registrada"></textarea></div>
+ ${criteriaHtml(pre)}
+ </div>`;
+ }
+ advisors+=`<div class="advisor"><h2>Asesor ${a}</h2>
+ <div class="field"><div class="label">Nombre del asesor</div><input id="advisor${a}" placeholder="Nombre"></div>${prospects}</div>`;
+ }
+ return `<div class="card"><h2>Laboratorio 3 × 2</h2>${commonFields()}
+ <p>Observa la ejecución. No se trata de auditar al asesor, sino de identificar patrones y oportunidades para mejorar la SMA.</p>
+ ${advisors}
+ <div class="field"><div class="label">Aprendizaje del Comité</div>
+ <textarea id="learning" placeholder="Después del muestreo, ¿qué aprendizaje se llevan sobre la ejecución de SMA en su unidad?"></textarea></div>
+ <button class="btn" onclick="submitM03()">Completar laboratorio</button>
+ </div>`;
+}
+
+function submitM01(){
+ const evidences=[];
+ for(let i=1;i<=5;i++) evidences.push({
+ profile:val(`m01profile${i}`),link:val(`m01link${i}`),comment:val(`m01comment${i}`)
+ });
+ call('registerRecoveryM01',{unidad:STATE.unidad,responsable:val('responsable'),correo:val('correo'),evidences});
+}
+
+function submitM02(){
+ const d=STATE.m02Recovery||{people:[]};
+ const pending=(d.people||[]).filter(p=>!p.assigned), assignments=[], manualParticipants=[];
+ pending.forEach((p,i)=>{const g=val(`m02g${i}`);if(g)assignments.push({email:p.email,groupId:g});});
+ for(let i=1;i<=M02_MANUAL_COUNT;i++){
+ const el=document.getElementById(`m02manual_${i}`); if(!el) continue;
+ const name=val(`m02mn${i}`), email=val(`m02me${i}`), groupId=val(`m02mg${i}`);
+ if(name||email||groupId) manualParticipants.push({name,email,groupId});
+ }
+ const d2=STATE.m02Recovery||{};
+ const declaredTotal=!d2.historicalRosterFound ? Number(val('m02DeclaredTotal')||0) : 0;
+ call('registerRecoveryM02Convocation',{unidad:STATE.unidad,responsable:val('responsable'),correo:val('correo'),declaredTotal,assignments,manualParticipants});
+}
+function formatM02Date(s){
+ const d=new Date(s+'-06:00');
+ return new Intl.DateTimeFormat('es-MX',{weekday:'long',day:'numeric',month:'long',hour:'numeric',minute:'2-digit'}).format(d);
+}
+
+function submitM03(){
+ const advisors=[];
+ for(let a=1;a<=3;a++){
+ const prospects=[];
+ for(let p=1;p<=2;p++){
+ const pre=`a${a}p${p}`, criteria={};
+ CRITERIA.forEach(c=>criteria[c[0]]=document.getElementById(`${pre}_${c[0]}`).checked);
+ prospects.push({prospect:val(`${pre}_prospect`),sma:val(`${pre}_sma`),criteria});
+ }
+ advisors.push({name:val(`advisor${a}`),prospects});
+ }
+ call('submitM03',{
+ unidad:STATE.unidad,responsable:val('responsable'),correo:val('correo'),
+ advisors,learning:val('learning')
+ });
+}
+
+function call(fn,payload){
+ setLoading(true);
+ google.script.run.withSuccessHandler(s=>{STATE=s;render();setLoading(false);window.scrollTo({top:0,behavior:'smooth'});})
+ .withFailureHandler(e=>{showError(e);setLoading(false)})[fn](payload);
+}
+
+function renderQuality(){ document.getElementById('qualityArea').innerHTML=''; }
+
+function val(id){const e=document.getElementById(id);return e?e.value.trim():''}
+function setLoading(on){document.getElementById('app').classList.toggle('loading',on)}
+function showError(e){alert((e&&e.message)?e.message:String(e||'Ocurrió un error'))}
+function formatDate(s){const [y,m,d]=s.split('-');return `${d}/${m}/${y}`}
+function escapeHtml(s){return String(s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
+</script>
+</body>
+</html>
